@@ -56,7 +56,7 @@
   },
   "peerDependencies": {
     "deepadata-ddna-tools": ">=0.1.0",
-    "deepadata-edm-sdk": ">=0.4.0"
+    "deepadata-edm-sdk": ">=0.5.0"
   },
   "peerDependenciesMeta": {
     "deepadata-ddna-tools": {
