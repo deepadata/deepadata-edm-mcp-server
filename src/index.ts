@@ -9,6 +9,9 @@ export { createServer, runServer } from './server.js';
 // Re-export types
 export * from './types.js';
 
+// Re-export API client
+export * from './api/index.js';
+
 // Re-export security
 export * from './security/index.js';
 

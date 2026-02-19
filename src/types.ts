@@ -197,10 +197,10 @@ export interface ExtractionOptions {
 }
 
 /**
- * Seal request
+ * Seal request (via DeepaData API)
  */
 export interface SealRequest {
   artifact: EdmArtifact;
-  privateKey: string;
-  did: string;
+  pathway?: 'subject' | 'delegated' | 'retrospective';
+  authority?: string;
 }

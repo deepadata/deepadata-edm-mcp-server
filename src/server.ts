@@ -110,7 +110,12 @@ export function createServer(config: ServerConfig = {}) {
 
   // Create tools
   const extractTool = createExtractTool(artifactStorage, getAuthContext);
-  const sealTool = createSealTool(envelopeStorage, getAuthContext);
+  const sealTool = createSealTool(
+    envelopeStorage,
+    getAuthContext,
+    process.env.DEEPADATA_API_KEY,
+    process.env.DEEPADATA_API_URL
+  );
   const validateTool = createValidateTool();
 
   // Create MCP server
@@ -348,6 +353,7 @@ main();
 
 // Export for programmatic use
 export * from './types.js';
+export * from './api/index.js';
 export * from './security/index.js';
 export * from './storage/index.js';
 export * from './resources/index.js';

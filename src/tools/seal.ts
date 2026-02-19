@@ -1,7 +1,8 @@
 /**
  * seal_artifact Tool
  *
- * Seal EDM artifact into a .ddna envelope with cryptographic signature
+ * Seal EDM artifact into a .ddna envelope via DeepaData API.
+ * Creates a certified envelope with registry entry.
  */
 
 import type {
@@ -11,6 +12,7 @@ import type {
   AuthContext,
 } from '../types.js';
 import { canExport, validateGovernance } from '../security/governance.js';
+import { DeepaDataClient, type IssueResponse } from '../api/deepadata-client.js';
 
 /**
  * Tool definition for MCP
@@ -18,7 +20,7 @@ import { canExport, validateGovernance } from '../security/governance.js';
 export const sealToolDefinition = {
   name: 'seal_artifact',
   description:
-    'Seal an EDM artifact with a cryptographic signature, creating a .ddna envelope. Requires a private key and DID.',
+    'Seal an EDM artifact via DeepaData API, creating a certified .ddna envelope with registry entry. Requires DEEPADATA_API_KEY environment variable.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -26,26 +28,23 @@ export const sealToolDefinition = {
         type: 'object',
         description: 'The EDM artifact to seal',
       },
-      privateKey: {
+      pathway: {
         type: 'string',
-        description: 'Hex-encoded private key for signing',
+        enum: ['subject', 'delegated', 'retrospective'],
+        description: 'Issuance pathway (default: delegated)',
+        default: 'delegated',
       },
-      did: {
+      authority: {
         type: 'string',
-        description: 'DID (Decentralized Identifier) of the signer',
-      },
-      algorithm: {
-        type: 'string',
-        description: 'Signature algorithm to use',
-        default: 'Ed25519',
+        description: 'Authority identifier (e.g., "app:your-platform"). Defaults to "mcp:edm-server"',
       },
       save: {
         type: 'boolean',
-        description: 'Whether to save the envelope to storage',
+        description: 'Whether to save the envelope to local storage',
         default: false,
       },
     },
-    required: ['artifact', 'privateKey', 'did'],
+    required: ['artifact'],
   },
 };
 
@@ -54,6 +53,8 @@ export const sealToolDefinition = {
  */
 export interface SealResult {
   envelope: DdnaEnvelope;
+  certificate_id?: string;
+  certification_level?: string;
   savedId?: string;
   warnings?: string[];
 }
@@ -75,108 +76,51 @@ export class SealError extends Error {
 export enum SealErrorCode {
   INVALID_INPUT = 'INVALID_INPUT',
   GOVERNANCE_VIOLATION = 'GOVERNANCE_VIOLATION',
-  SIGNING_FAILED = 'SIGNING_FAILED',
+  API_ERROR = 'API_ERROR',
+  API_KEY_MISSING = 'API_KEY_MISSING',
   STORAGE_FAILED = 'STORAGE_FAILED',
-  INVALID_KEY = 'INVALID_KEY',
 }
-
-/**
- * Seal function type (to be provided by ddna-tools)
- */
-export type SealFunction = (
-  artifact: EdmArtifact,
-  privateKey: Uint8Array,
-  did: string,
-  algorithm?: string
-) => Promise<DdnaEnvelope>;
-
-/**
- * Convert hex string to Uint8Array
- */
-export function hexToKey(hex: string): Uint8Array {
-  // Remove 0x prefix if present
-  const cleanHex = hex.startsWith('0x') ? hex.slice(2) : hex;
-
-  // Validate hex string
-  if (!/^[0-9a-fA-F]*$/.test(cleanHex)) {
-    throw new SealError('Invalid hex string', SealErrorCode.INVALID_KEY);
-  }
-
-  if (cleanHex.length % 2 !== 0) {
-    throw new SealError(
-      'Hex string must have even length',
-      SealErrorCode.INVALID_KEY
-    );
-  }
-
-  const bytes = new Uint8Array(cleanHex.length / 2);
-  for (let i = 0; i < cleanHex.length; i += 2) {
-    bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16);
-  }
-
-  return bytes;
-}
-
-/**
- * Default placeholder seal function
- *
- * In production, this should be replaced by deepadata-ddna-tools seal
- */
-const defaultSealer: SealFunction = async (
-  artifact: EdmArtifact,
-  _privateKey: Uint8Array,
-  did: string,
-  algorithm: string = 'Ed25519'
-): Promise<DdnaEnvelope> => {
-  const now = new Date().toISOString();
-
-  // Create placeholder signature (NOT cryptographically secure)
-  // In production, use actual cryptographic signing
-  const signatureValue = Buffer.from(
-    JSON.stringify({
-      placeholder: true,
-      artifact_id: artifact.artifact_id,
-      timestamp: now,
-    })
-  ).toString('base64');
-
-  return {
-    version: '1.0',
-    artifact,
-    signature: {
-      algorithm,
-      signer_did: did,
-      value: signatureValue,
-    },
-    sealed_at: now,
-  };
-};
 
 /**
  * Seal tool handler class
  */
 export class SealToolHandler {
-  private readonly sealFn: SealFunction;
+  private readonly client: DeepaDataClient | null;
 
   constructor(
     private readonly storage: EnvelopeStorage | null,
     private readonly getAuthContext: () => AuthContext | null,
-    sealFn?: SealFunction
+    apiKey?: string,
+    apiBaseUrl?: string
   ) {
-    this.sealFn = sealFn || defaultSealer;
+    if (apiKey) {
+      this.client = new DeepaDataClient({
+        apiKey,
+        baseUrl: apiBaseUrl,
+      });
+    } else {
+      this.client = null;
+    }
   }
 
   /**
-   * Execute sealing
+   * Execute sealing via DeepaData API
    */
   async execute(args: {
     artifact: EdmArtifact;
-    privateKey: string;
-    did: string;
-    algorithm?: string;
+    pathway?: 'subject' | 'delegated' | 'retrospective';
+    authority?: string;
     save?: boolean;
   }): Promise<SealResult> {
     const warnings: string[] = [];
+
+    // Check API key availability
+    if (!this.client) {
+      throw new SealError(
+        'DeepaData API key required for sealing. Set DEEPADATA_API_KEY environment variable.',
+        SealErrorCode.API_KEY_MISSING
+      );
+    }
 
     // Validate artifact
     if (!args.artifact) {
@@ -211,51 +155,39 @@ export class SealToolHandler {
       );
     }
 
-    // Validate DID format
-    if (!args.did || !args.did.startsWith('did:')) {
-      throw new SealError(
-        'Invalid DID format (must start with did:)',
-        SealErrorCode.INVALID_INPUT
-      );
-    }
-
-    // Parse private key
-    let privateKeyBytes: Uint8Array;
+    // Call DeepaData API
+    let response: IssueResponse;
     try {
-      privateKeyBytes = hexToKey(args.privateKey);
+      response = await this.client.issue({
+        artifact: args.artifact,
+        pathway: args.pathway || 'delegated',
+        authority: args.authority || 'mcp:edm-server',
+      });
     } catch (error) {
       throw new SealError(
-        'Invalid private key format',
-        SealErrorCode.INVALID_KEY,
+        `API request failed: ${error instanceof Error ? error.message : error}`,
+        SealErrorCode.API_ERROR,
         error as Error
       );
     }
 
-    // Perform sealing
-    let envelope: DdnaEnvelope;
-    try {
-      envelope = await this.sealFn(
-        args.artifact,
-        privateKeyBytes,
-        args.did,
-        args.algorithm
-      );
-    } catch (error) {
+    if (!response.success || !response.data) {
       throw new SealError(
-        'Signing failed',
-        SealErrorCode.SIGNING_FAILED,
-        error as Error
+        response.error?.message || 'Sealing failed',
+        SealErrorCode.API_ERROR
       );
     }
 
-    // Optionally save to storage
+    const envelope = response.data.envelope as DdnaEnvelope;
+
+    // Optionally save to local storage
     let savedId: string | undefined;
     if (args.save && this.storage) {
       try {
         savedId = await this.storage.save(envelope);
       } catch (error) {
         throw new SealError(
-          'Failed to save envelope',
+          'Failed to save envelope to local storage',
           SealErrorCode.STORAGE_FAILED,
           error as Error
         );
@@ -264,6 +196,8 @@ export class SealToolHandler {
 
     return {
       envelope,
+      certificate_id: response.data.certificate_id,
+      certification_level: response.data.certification_level,
       savedId,
       warnings: warnings.length > 0 ? warnings : undefined,
     };
@@ -276,9 +210,10 @@ export class SealToolHandler {
 export function createSealTool(
   storage: EnvelopeStorage | null,
   getAuthContext: () => AuthContext | null,
-  sealFn?: SealFunction
+  apiKey?: string,
+  apiBaseUrl?: string
 ) {
-  const handler = new SealToolHandler(storage, getAuthContext, sealFn);
+  const handler = new SealToolHandler(storage, getAuthContext, apiKey, apiBaseUrl);
 
   return {
     definition: sealToolDefinition,

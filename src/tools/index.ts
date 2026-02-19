@@ -18,9 +18,7 @@ export {
   SealErrorCode,
   sealToolDefinition,
   createSealTool,
-  hexToKey,
   type SealResult,
-  type SealFunction,
 } from './seal.js';
 
 export {
