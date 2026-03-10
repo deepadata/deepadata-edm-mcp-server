@@ -65,7 +65,7 @@ Add to your Claude Desktop configuration (`~/.claude/config.json` on macOS/Linux
 
 **MIME Type:** `application/json`
 
-Read an EDM v0.4.0 artifact by ID. Respects governance rules (exportability, visibility).
+Read an EDM v0.6.0 artifact by ID. Respects governance rules (exportability, visibility).
 
 ### DDNA Envelope Resource
 
