@@ -286,5 +286,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Related Projects
 
 - [deepadata-edm-sdk](https://github.com/deepadata/deepadata-edm-sdk) - EDM SDK for extraction
-- [deepadata-ddna-tools](https://github.com/deepadata/deepadata-ddna-tools) - DDNA sealing and verification
+- [deepadata-ddna-tools](https://github.com/emotional-data-model/ddna-tools) - DDNA sealing and verification
 - [Model Context Protocol](https://modelcontextprotocol.io/) - MCP specification
