@@ -1,6 +1,6 @@
 # Proprietary Software
 
-Copyright (c) 2024-present DeepaData. All rights reserved.
+Copyright (c) 2025-present DeepaData. All rights reserved.
 
 This software and its source code are proprietary and confidential.
 Unauthorised copying, distribution, modification, or use of this
