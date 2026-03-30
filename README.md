@@ -50,12 +50,13 @@ Add to your Claude Desktop configuration (`~/.claude/config.json` on macOS/Linux
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `DEEPADATA_API_KEY` | DeepaData API key for extraction and sealing (required for production) | - |
+| `DEEPADATA_API_URL` | DeepaData API base URL | `https://deepadata.com` |
 | `EDM_STORAGE_PATH` | Directory for artifact/envelope storage | `./.edm-data` |
 | `EDM_AUTH_TOKEN` | Authentication token (if using env token auth) | - |
 | `EDM_USER_ID` | User ID for authenticated requests | `authenticated-user` |
 | `EDM_USER_ROLES` | Comma-separated roles | `user` |
 | `EDM_ORG_ID` | Organization ID | - |
-| `ANTHROPIC_API_KEY` | API key for extraction (if using Anthropic) | - |
 
 ## Resources
 
@@ -65,7 +66,7 @@ Add to your Claude Desktop configuration (`~/.claude/config.json` on macOS/Linux
 
 **MIME Type:** `application/json`
 
-Read an EDM v0.6.0 artifact by ID. Respects governance rules (exportability, visibility).
+Read an EDM v0.7.0 artifact by ID. Respects governance rules (exportability, visibility).
 
 ### DDNA Envelope Resource
 

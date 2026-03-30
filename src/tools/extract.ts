@@ -18,7 +18,7 @@ import { applyDefaultGovernance } from '../security/governance.js';
 export const extractToolDefinition = {
   name: 'extract_from_content',
   description:
-    'Extract EDM artifact from text content and optional image. Returns structured data following the EDM v0.4.0 schema.',
+    'Extract EDM artifact from text content and optional image. Returns structured data following the EDM v0.7.0 schema.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -103,7 +103,7 @@ const defaultExtractor: ExtractFunction = async (
 
   // Create a basic artifact structure from the input
   const artifact: EdmArtifact = {
-    schema_version: '0.4.0',
+    schema_version: '0.7.0',
     artifact_id: id,
     meta: {
       created_at: now,

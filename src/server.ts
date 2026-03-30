@@ -59,6 +59,8 @@ import {
   validateToolDefinition,
 } from './tools/index.js';
 
+import { createExtractorFromEnv } from './extractors/index.js';
+
 /**
  * Server name and version
  */
@@ -109,7 +111,14 @@ export function createServer(config: ServerConfig = {}) {
   const ddnaProvider = new DdnaResourceProvider(envelopeStorage, getAuthContext);
 
   // Create tools
-  const extractTool = createExtractTool(artifactStorage, getAuthContext);
+  // Use DeepaData API extractor if configured, otherwise falls back to placeholder
+  const extractFn = createExtractorFromEnv();
+  if (!extractFn) {
+    console.error(
+      'Warning: DEEPADATA_API_KEY not set. Extraction will use placeholder (non-functional).'
+    );
+  }
+  const extractTool = createExtractTool(artifactStorage, getAuthContext, extractFn ?? undefined);
   const sealTool = createSealTool(
     envelopeStorage,
     getAuthContext,
