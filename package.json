@@ -32,7 +32,7 @@
     }
   },
   "bin": {
-    "edm-mcp-server": "./dist/server.js"
+    "edm-mcp-server": "dist/server.js"
   },
   "scripts": {
     "build": "tsc",

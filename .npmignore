@@ -1,0 +1,25 @@
+# Source files (dist/ is the published build)
+src/
+
+# Tests
+tests/
+jest.config.js
+
+# Build config
+tsconfig.json
+
+# Local IDE config
+.claude/
+
+# Development docs (keep README and PROPRIETARY)
+docs/
+
+# Git
+.gitignore
+.gitattributes
+
+# Environment examples
+.env.example
+
+# Claude project docs
+CLAUDE.md
