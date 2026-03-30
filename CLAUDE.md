@@ -11,7 +11,7 @@ into the assistant context window.
 
 - **Current version:** v0.1.0
 - **License:** UNLICENSED (commercial)
-- **Status:** Scaffolded, needs polish
+- **Status:** Production ready — v0.1.0 published to npm 2026-03-30. Four tools: extract_from_content, seal_artifact, validate_edm, edm_project. Real extraction via DeepaData hosted API. 108 tests passing.
 
 ## Role in the DeepaData System
 
@@ -30,9 +30,10 @@ into the assistant context window.
 
 ## MCP Tools
 
-- `extract_from_content` — LLM extraction (wraps SDK)
-- `seal_artifact` — Cryptographic signing (wraps ddna-tools)
+- `extract_from_content` — LLM extraction via DeepaData API
+- `seal_artifact` — Certified sealing via DeepaData API
 - `validate_edm` — Schema validation
+- `edm_project` — Agent projection (ADR-0006)
 
 ## Hard Constraints
 
