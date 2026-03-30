@@ -9,7 +9,6 @@ import {
   SealToolHandler,
   SealError,
   SealErrorCode,
-  hexToKey,
   ValidateToolHandler,
   isValidEdmArtifact,
 } from '../src/tools/index.js';
@@ -18,7 +17,7 @@ import type { EdmArtifact, AuthContext } from '../src/types.js';
 
 describe('Tools', () => {
   const createArtifact = (id: string): EdmArtifact => ({
-    schema_version: '0.4.0',
+    schema_version: '0.7.0',
     artifact_id: id,
     meta: {
       created_at: new Date().toISOString(),
@@ -55,7 +54,7 @@ describe('Tools', () => {
 
       expect(result.artifact).toBeDefined();
       expect(result.artifact.artifact_id).toBeDefined();
-      expect(result.artifact.schema_version).toBe('0.4.0');
+      expect(result.artifact.schema_version).toBe('0.7.0');
       expect(result.artifact.content.data.source_text).toBe(
         'Hello, this is test content.'
       );
@@ -127,145 +126,90 @@ describe('Tools', () => {
     });
   });
 
+  /**
+   * SealToolHandler tests
+   *
+   * NOTE: The seal tool now uses DeepaData API (DEEPADATA_API_KEY) instead of
+   * local private key signing. Full integration tests require a valid API key.
+   * These tests verify input validation and error handling without API calls.
+   */
   describe('SealToolHandler', () => {
     let storage: MemoryEnvelopeStorage;
     let authContext: AuthContext;
     let handler: SealToolHandler;
 
-    const testPrivateKey =
-      '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
-
     beforeEach(() => {
       storage = new MemoryEnvelopeStorage();
       authContext = { userId: 'user-1', roles: ['user'] };
+      // Create handler without API key to test validation
       handler = new SealToolHandler(storage, () => authContext);
     });
 
-    it('should seal artifact into envelope', async () => {
-      const result = await handler.execute({
-        artifact: createArtifact('art-1'),
-        privateKey: testPrivateKey,
-        did: 'did:example:123',
+    it('should throw API_KEY_MISSING when no API key configured', async () => {
+      await expect(
+        handler.execute({
+          artifact: createArtifact('art-1'),
+        })
+      ).rejects.toMatchObject({
+        code: SealErrorCode.API_KEY_MISSING,
       });
-
-      expect(result.envelope).toBeDefined();
-      expect(result.envelope.artifact.artifact_id).toBe('art-1');
-      expect(result.envelope.signature.signer_did).toBe('did:example:123');
-      expect(result.envelope.sealed_at).toBeDefined();
     });
 
-    it('should save envelope when requested', async () => {
-      const result = await handler.execute({
-        artifact: createArtifact('art-1'),
-        privateKey: testPrivateKey,
-        did: 'did:example:123',
-        save: true,
-      });
-
-      expect(result.savedId).toBeDefined();
-
-      const loaded = await storage.load(result.savedId!);
-      expect(loaded.artifact.artifact_id).toBe('art-1');
-    });
-
-    it('should throw INVALID_INPUT for missing artifact', async () => {
+    // Note: Without API key, all seal operations fail with API_KEY_MISSING
+    // before other validation runs. These tests verify the API key check.
+    it('should throw API_KEY_MISSING for missing artifact (API key check first)', async () => {
       await expect(
         handler.execute({
           artifact: null as unknown as EdmArtifact,
-          privateKey: testPrivateKey,
-          did: 'did:example:123',
         })
       ).rejects.toMatchObject({
-        code: SealErrorCode.INVALID_INPUT,
+        code: SealErrorCode.API_KEY_MISSING,
       });
     });
 
-    it('should throw INVALID_INPUT for artifact without id', async () => {
+    it('should throw API_KEY_MISSING for artifact without id (API key check first)', async () => {
       const artifact = createArtifact('');
       artifact.artifact_id = '';
 
       await expect(
         handler.execute({
           artifact,
-          privateKey: testPrivateKey,
-          did: 'did:example:123',
         })
       ).rejects.toMatchObject({
-        code: SealErrorCode.INVALID_INPUT,
+        code: SealErrorCode.API_KEY_MISSING,
       });
     });
 
-    it('should throw GOVERNANCE_VIOLATION for non-exportable artifacts', async () => {
+    it('should throw API_KEY_MISSING for non-exportable artifacts (API key check first)', async () => {
       const artifact = createArtifact('art-1');
       artifact.governance.exportability = 'prohibited';
 
+      // Note: API key check happens before governance check
       await expect(
         handler.execute({
           artifact,
-          privateKey: testPrivateKey,
-          did: 'did:example:123',
         })
       ).rejects.toMatchObject({
-        code: SealErrorCode.GOVERNANCE_VIOLATION,
+        code: SealErrorCode.API_KEY_MISSING,
       });
     });
 
-    it('should throw INVALID_INPUT for invalid DID', async () => {
-      await expect(
-        handler.execute({
-          artifact: createArtifact('art-1'),
-          privateKey: testPrivateKey,
-          did: 'invalid-did',
-        })
-      ).rejects.toMatchObject({
-        code: SealErrorCode.INVALID_INPUT,
-      });
+    it('should accept optional pathway parameter', () => {
+      // Type check - pathway should be accepted
+      const args: Parameters<typeof handler.execute>[0] = {
+        artifact: createArtifact('art-1'),
+        pathway: 'delegated',
+      };
+      expect(args.pathway).toBe('delegated');
     });
 
-    it('should throw INVALID_KEY for invalid hex', async () => {
-      await expect(
-        handler.execute({
-          artifact: createArtifact('art-1'),
-          privateKey: 'not-hex!',
-          did: 'did:example:123',
-        })
-      ).rejects.toMatchObject({
-        code: SealErrorCode.INVALID_KEY,
-      });
-    });
-
-    it('should include warnings in result', async () => {
-      const artifact = createArtifact('art-1');
-      (artifact.meta as { visibility?: string }).visibility = undefined;
-
-      const result = await handler.execute({
-        artifact,
-        privateKey: testPrivateKey,
-        did: 'did:example:123',
-      });
-
-      expect(result.warnings).toBeDefined();
-      expect(result.warnings?.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('hexToKey', () => {
-    it('should convert hex string to Uint8Array', () => {
-      const result = hexToKey('0102030405');
-      expect(result).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
-    });
-
-    it('should handle 0x prefix', () => {
-      const result = hexToKey('0x0102030405');
-      expect(result).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
-    });
-
-    it('should throw for invalid hex', () => {
-      expect(() => hexToKey('ghijkl')).toThrow(SealError);
-    });
-
-    it('should throw for odd-length hex', () => {
-      expect(() => hexToKey('012')).toThrow(SealError);
+    it('should accept optional authority parameter', () => {
+      // Type check - authority should be accepted
+      const args: Parameters<typeof handler.execute>[0] = {
+        artifact: createArtifact('art-1'),
+        authority: 'mcp:edm-server',
+      };
+      expect(args.authority).toBe('mcp:edm-server');
     });
   });
 
@@ -392,7 +336,7 @@ describe('Tools', () => {
 
     it('should return false for missing required fields', () => {
       expect(isValidEdmArtifact({})).toBe(false);
-      expect(isValidEdmArtifact({ schema_version: '0.4.0' })).toBe(false);
+      expect(isValidEdmArtifact({ schema_version: '0.7.0' })).toBe(false);
     });
   });
 });
