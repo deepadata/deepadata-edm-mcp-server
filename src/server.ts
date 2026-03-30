@@ -54,9 +54,11 @@ import {
   createExtractTool,
   createSealTool,
   createValidateTool,
+  createProjectTool,
   extractToolDefinition,
   sealToolDefinition,
   validateToolDefinition,
+  projectToolDefinition,
 } from './tools/index.js';
 
 import { createExtractorFromEnv } from './extractors/index.js';
@@ -126,6 +128,11 @@ export function createServer(config: ServerConfig = {}) {
     process.env.DEEPADATA_API_URL
   );
   const validateTool = createValidateTool();
+  const projectTool = createProjectTool(
+    artifactStorage,
+    getAuthContext,
+    process.env.KIMI_API_KEY
+  );
 
   // Create MCP server
   const server = new Server(
@@ -258,7 +265,7 @@ export function createServer(config: ServerConfig = {}) {
   // Handler: List tools
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [extractToolDefinition, sealToolDefinition, validateToolDefinition],
+      tools: [extractToolDefinition, sealToolDefinition, validateToolDefinition, projectToolDefinition],
     };
   });
 
@@ -297,6 +304,18 @@ export function createServer(config: ServerConfig = {}) {
 
         case 'validate_edm': {
           const result = await validateTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'edm_project': {
+          const result = await projectTool.handler(args);
           return {
             content: [
               {

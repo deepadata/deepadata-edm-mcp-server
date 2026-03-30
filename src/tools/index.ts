@@ -28,3 +28,13 @@ export {
   isValidEdmArtifact,
   type ValidateFunction,
 } from './validate.js';
+
+export {
+  ProjectToolHandler,
+  ProjectError,
+  ProjectErrorCode,
+  projectToolDefinition,
+  createProjectTool,
+  type EdmProjection,
+  type ProjectResult,
+} from './project.js';
