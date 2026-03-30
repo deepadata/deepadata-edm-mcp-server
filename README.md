@@ -35,11 +35,12 @@ Add to your Claude Desktop configuration (`~/.claude/config.json` on macOS/Linux
 ```json
 {
   "mcpServers": {
-    "edm": {
-      "command": "node",
-      "args": ["/path/to/deepadata-edm-mcp-server/dist/server.js"],
+    "deepadata-edm": {
+      "command": "npx",
+      "args": ["deepadata-edm-mcp-server"],
       "env": {
-        "EDM_STORAGE_PATH": "/path/to/your/edm-data"
+        "DEEPADATA_API_KEY": "your_api_key_here",
+        "DEEPADATA_API_URL": "https://deepadata.com"
       }
     }
   }
@@ -94,15 +95,16 @@ Extract EDM artifact from text content and optional image.
 
 ### seal_artifact
 
-Seal an EDM artifact with a cryptographic signature.
+Seal an EDM artifact via DeepaData API, creating a certified `.ddna` envelope with registry entry.
+
+**Note:** Requires `DEEPADATA_API_KEY` environment variable.
 
 ```typescript
 {
   artifact: object;    // Required: EDM artifact to seal
-  privateKey: string;  // Required: Hex-encoded private key
-  did: string;         // Required: DID of the signer
-  algorithm?: string;  // Optional: Signature algorithm (default: Ed25519)
-  save?: boolean;      // Optional: Save to storage (default: false)
+  pathway?: string;    // Optional: "subject" | "delegated" | "retrospective" (default: "delegated")
+  authority?: string;  // Optional: Authority identifier (default: "mcp:edm-server")
+  save?: boolean;      // Optional: Save to local storage (default: false)
 }
 ```
 
@@ -116,6 +118,19 @@ Validate an EDM artifact against the schema.
   strict?: boolean;    // Optional: Treat warnings as errors
 }
 ```
+
+### edm_project
+
+Project an EDM artifact into the canonical agent-consumable shape (ADR-0006). Preserves governance properties for agent pipelines.
+
+```typescript
+{
+  artifact_id: string;    // Required: ID of the artifact to project
+  context_note?: boolean; // Optional: Generate LLM summary if true
+}
+```
+
+Returns the projection shape with `governance`, `emotional_state`, `salience`, and optional `context_note` blocks. See ADR-0006 for the full projection schema.
 
 ## Programmatic Usage
 
@@ -282,7 +297,9 @@ npm run typecheck
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+This software is proprietary. See [PROPRIETARY.md](PROPRIETARY.md) for license terms.
+
+To use this server, obtain a `DEEPADATA_API_KEY` at [deepadata.com](https://deepadata.com).
 
 ## Related Projects
 
