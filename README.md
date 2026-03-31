@@ -1,12 +1,20 @@
 # deepadata-edm-mcp-server
 
-MCP server exposing EDM artifacts as resources for AI assistants. Thin adapter for Claude Desktop and MCP-compatible agents. Requires secure deployment with BYOA (bring your own auth).
+The significance layer for AI memory — as an MCP server.
 
-> **WARNING:** This server is NOT safe for public internet deployment without proper security measures. See the [Security Checklist](#security-checklist) below.
+EDM artifacts encode what mattered at capture time: emotional weight, arc type, recall triggers, identity thread. This MCP server exposes EDM extraction and sealing as tools for Claude Desktop and any MCP-compatible AI agent.
+
+Four tools:
+- **extract_from_content** — extract EDM artifact from any text
+- **seal_artifact** — seal and register artifact via DeepaData API
+- **validate_edm** — validate artifact against EDM v0.7.0 schema
+- **edm_project** — project artifact fields as agent context
+
+Requires a `DEEPADATA_API_KEY`. Get one at [deepadata.com](https://deepadata.com).
 
 ## Overview
 
-This server implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to expose EDM (Enhanced Data Model) artifacts as resources that AI assistants can read and manipulate. It provides:
+This server implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to expose EDM (Emotional Data Model) artifacts as resources that AI assistants can read and manipulate. It provides:
 
 - **Resources:** Read-only access to EDM artifacts (`edm://artifact/{id}`) and sealed DDNA envelopes (`ddna://envelope/{id}`)
 - **Tools:** Actions for extracting, sealing, and validating artifacts
@@ -35,12 +43,11 @@ Add to your Claude Desktop configuration (`~/.claude/config.json` on macOS/Linux
 ```json
 {
   "mcpServers": {
-    "deepadata-edm": {
+    "deepadata": {
       "command": "npx",
-      "args": ["deepadata-edm-mcp-server"],
+      "args": ["-y", "deepadata-edm-mcp-server"],
       "env": {
-        "DEEPADATA_API_KEY": "your_api_key_here",
-        "DEEPADATA_API_URL": "https://deepadata.com"
+        "DEEPADATA_API_KEY": "your-api-key-here"
       }
     }
   }
