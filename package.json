@@ -1,6 +1,6 @@
 {
   "name": "deepadata-edm-mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server exposing EDM artifacts as resources for AI assistants",
   "type": "module",
   "main": "dist/server.js",

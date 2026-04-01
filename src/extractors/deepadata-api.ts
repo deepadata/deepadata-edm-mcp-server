@@ -53,6 +53,7 @@ export function createDeepaDataExtractor(
     // Build request body matching /api/v1/extract expected shape
     const body: Record<string, unknown> = {
       content: request.content.text,
+      source: 'mcp',
     };
 
     // Optional image

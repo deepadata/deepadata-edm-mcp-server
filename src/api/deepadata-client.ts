@@ -29,6 +29,8 @@ export interface IssueRequest {
   subject_ref?: string;
   /** Optional VitaPass ID */
   subject_vp_id?: string;
+  /** Source attribution for billing analytics */
+  source?: string;
 }
 
 /**
@@ -116,7 +118,7 @@ export class DeepaDataClient {
         'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify({ ...request, source: 'mcp' }),
     });
 
     const data = await response.json() as IssueResponse;
