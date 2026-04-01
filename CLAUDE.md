@@ -9,9 +9,10 @@ artifacts as Resources for AI assistants like Claude Desktop.
 Thin adapter architecture — brings significance artifacts
 into the assistant context window.
 
-- **Current version:** v0.1.0
+- **Current version:** v0.1.1
 - **License:** UNLICENSED (commercial)
-- **Status:** Production ready — v0.1.0 published to npm 2026-03-30. Four tools: extract_from_content, seal_artifact, validate_edm, edm_project. Real extraction via DeepaData hosted API. 108 tests passing.
+- **Status:** Production ready — v0.1.1 published to npm 2026-04-01. Four tools: extract_from_content, seal_artifact, validate_edm, edm_project. Real extraction via DeepaData hosted API. 108 tests passing.
+- **v0.1.1:** Added `source: 'mcp'` attribution to all API calls for billing analytics.
 
 ## Role in the DeepaData System
 
