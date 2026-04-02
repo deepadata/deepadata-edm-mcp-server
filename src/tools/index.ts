@@ -38,3 +38,9 @@ export {
   type EdmProjection,
   type ProjectResult,
 } from './project.js';
+
+export {
+  ActivateToolHandler,
+  activateToolDefinition,
+  createActivateTool,
+} from './activate.js';

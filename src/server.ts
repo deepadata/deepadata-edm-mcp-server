@@ -55,10 +55,12 @@ import {
   createSealTool,
   createValidateTool,
   createProjectTool,
+  createActivateTool,
   extractToolDefinition,
   sealToolDefinition,
   validateToolDefinition,
   projectToolDefinition,
+  activateToolDefinition,
 } from './tools/index.js';
 
 import { createExtractorFromEnv } from './extractors/index.js';
@@ -132,6 +134,10 @@ export function createServer(config: ServerConfig = {}) {
     artifactStorage,
     getAuthContext,
     process.env.KIMI_API_KEY
+  );
+  const activateTool = createActivateTool(
+    process.env.DEEPADATA_API_KEY,
+    process.env.DEEPADATA_API_URL
   );
 
   // Create MCP server
@@ -265,7 +271,7 @@ export function createServer(config: ServerConfig = {}) {
   // Handler: List tools
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [extractToolDefinition, sealToolDefinition, validateToolDefinition, projectToolDefinition],
+      tools: [extractToolDefinition, sealToolDefinition, validateToolDefinition, projectToolDefinition, activateToolDefinition],
     };
   });
 
@@ -316,6 +322,18 @@ export function createServer(config: ServerConfig = {}) {
 
         case 'edm_project': {
           const result = await projectTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'deepadata_activate': {
+          const result = await activateTool.handler(args);
           return {
             content: [
               {
