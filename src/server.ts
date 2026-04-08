@@ -56,11 +56,17 @@ import {
   createValidateTool,
   createProjectTool,
   createActivateTool,
+  createWikiGenerateTool,
+  createWikiSearchTool,
+  createWikiLintTool,
   extractToolDefinition,
   sealToolDefinition,
   validateToolDefinition,
   projectToolDefinition,
   activateToolDefinition,
+  wikiGenerateToolDefinition,
+  wikiSearchToolDefinition,
+  wikiLintToolDefinition,
 } from './tools/index.js';
 
 import { createExtractorFromEnv } from './extractors/index.js';
@@ -139,6 +145,13 @@ export function createServer(config: ServerConfig = {}) {
     process.env.DEEPADATA_API_KEY,
     process.env.DEEPADATA_API_URL
   );
+  const wikiGenerateTool = createWikiGenerateTool(
+    process.env.DEEPADATA_API_KEY,
+    process.env.DEEPADATA_API_URL,
+    process.env.ANTHROPIC_API_KEY
+  );
+  const wikiSearchTool = createWikiSearchTool();
+  const wikiLintTool = createWikiLintTool();
 
   // Create MCP server
   const server = new Server(
@@ -271,7 +284,16 @@ export function createServer(config: ServerConfig = {}) {
   // Handler: List tools
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [extractToolDefinition, sealToolDefinition, validateToolDefinition, projectToolDefinition, activateToolDefinition],
+      tools: [
+        extractToolDefinition,
+        sealToolDefinition,
+        validateToolDefinition,
+        projectToolDefinition,
+        activateToolDefinition,
+        wikiGenerateToolDefinition,
+        wikiSearchToolDefinition,
+        wikiLintToolDefinition,
+      ],
     };
   });
 
@@ -334,6 +356,42 @@ export function createServer(config: ServerConfig = {}) {
 
         case 'deepadata_activate': {
           const result = await activateTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'edm_wiki_generate': {
+          const result = await wikiGenerateTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'edm_wiki_search': {
+          const result = await wikiSearchTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'edm_wiki_lint': {
+          const result = await wikiLintTool.handler(args);
           return {
             content: [
               {

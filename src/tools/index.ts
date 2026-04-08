@@ -44,3 +44,12 @@ export {
   activateToolDefinition,
   createActivateTool,
 } from './activate.js';
+
+export {
+  createWikiGenerateTool,
+  createWikiSearchTool,
+  createWikiLintTool,
+  wikiGenerateToolDefinition,
+  wikiSearchToolDefinition,
+  wikiLintToolDefinition,
+} from './wiki.js';
