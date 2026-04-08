@@ -342,7 +342,7 @@ export class WikiGenerateToolHandler {
     const response = await fetch(`${baseUrl}/api/v1/extract`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        'X-API-Key': apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
