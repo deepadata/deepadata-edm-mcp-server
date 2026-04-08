@@ -9,10 +9,10 @@ artifacts as Resources for AI assistants like Claude Desktop.
 Thin adapter architecture — brings significance artifacts
 into the assistant context window.
 
-- **Current version:** v0.1.1
+- **Current version:** v0.2.0
 - **License:** UNLICENSED (commercial)
-- **Status:** Production ready — v0.1.1 published to npm 2026-04-01. Four tools: extract_from_content, seal_artifact, validate_edm, edm_project. Real extraction via DeepaData hosted API. 108 tests passing.
-- **v0.1.1:** Added `source: 'mcp'` attribution to all API calls for billing analytics.
+- **Status:** Production ready — v0.2.0 published to npm 2026-04-08. Eight tools including wiki generation. Real extraction via DeepaData hosted API.
+- **v0.2.0:** Added `edm_wiki_generate`, `edm_wiki_search`, `edm_wiki_lint` tools. Significance wiki as navigable markdown, BYOK, Obsidian-ready output.
 
 ## Role in the DeepaData System
 
@@ -35,6 +35,10 @@ into the assistant context window.
 - `seal_artifact` — Certified sealing via DeepaData API
 - `validate_edm` — Schema validation
 - `edm_project` — Agent projection (ADR-0006)
+- `deepadata_activate` — NL query to significance field filters
+- `edm_wiki_generate` — Generate significance wiki from source text
+- `edm_wiki_search` — Search wiki by arc_type, emotional_weight, identity_thread
+- `edm_wiki_lint` — Health check and trajectory pattern detection
 
 ## Hard Constraints
 
