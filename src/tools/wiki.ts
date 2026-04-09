@@ -119,7 +119,10 @@ interface SignificanceArticle {
   echo: string | null;
   identity_thread: string | null;
   tether_type: string | null;
-  tether_target: string | null;
+  narrative_archetype: string | null;
+  emotion_primary: string | null;
+  emotion_subtone: string[] | null;
+  motivational_orientation: string | null;
   recall_triggers: string[] | null;
   somatic_signature: string | null;
   narrative: string | null;
@@ -185,16 +188,20 @@ interface EdmArtifactPortable {
     arc_type?: string;
     identity_thread?: string;
     somatic_signature?: string;
+    narrative_archetype?: string;
+    emotion_primary?: string;
+    emotion_subtone?: string[];
   };
   gravity?: {
     emotional_weight?: number;
     valence?: string;
     recurrence_pattern?: string;
     tether_type?: string;
-    tether_target?: string;
     recall_triggers?: string[];
   };
-  impulse?: Record<string, unknown>;
+  impulse?: {
+    motivational_orientation?: string;
+  };
   milky_way?: Record<string, unknown>;
 }
 
@@ -430,13 +437,19 @@ export class WikiGenerateToolHandler {
     // Identity
     const identityThread = artifact.constellation?.identity_thread;
     const tetherType = artifact.gravity?.tether_type;
-    const tetherTarget = artifact.gravity?.tether_target;
+    const narrativeArchetype = artifact.constellation?.narrative_archetype;
+    const emotionPrimary = artifact.constellation?.emotion_primary;
+    const emotionSubtone = artifact.constellation?.emotion_subtone;
+    const motivationalOrientation = artifact.impulse?.motivational_orientation;
 
-    if (identityThread || tetherType || tetherTarget) {
+    if (identityThread || tetherType || narrativeArchetype || emotionPrimary || emotionSubtone || motivationalOrientation) {
       lines.push('## Identity');
       if (identityThread) lines.push(`- **identity_thread:** ${identityThread}`);
       if (tetherType) lines.push(`- **tether_type:** ${tetherType}`);
-      if (tetherTarget) lines.push(`- **tether_target:** ${tetherTarget}`);
+      if (narrativeArchetype) lines.push(`- **narrative_archetype:** ${narrativeArchetype}`);
+      if (emotionPrimary) lines.push(`- **emotion_primary:** ${emotionPrimary}`);
+      if (emotionSubtone && emotionSubtone.length > 0) lines.push(`- **emotion_subtone:** ${JSON.stringify(emotionSubtone)}`);
+      if (motivationalOrientation) lines.push(`- **motivational_orientation:** ${motivationalOrientation}`);
       lines.push('');
     }
 
@@ -456,14 +469,6 @@ export class WikiGenerateToolHandler {
       }
       if (somaticSignature)
         lines.push(`- **somatic_signature:** ${somaticSignature}`);
-      lines.push('');
-    }
-
-    // Narrative
-    const narrative = artifact.core?.narrative;
-    if (narrative) {
-      lines.push('## Narrative');
-      lines.push(narrative);
       lines.push('');
     }
 
@@ -618,7 +623,10 @@ export class WikiSearchToolHandler {
       echo: null,
       identity_thread: null,
       tether_type: null,
-      tether_target: null,
+      narrative_archetype: null,
+      emotion_primary: null,
+      emotion_subtone: null,
+      motivational_orientation: null,
       recall_triggers: null,
       somatic_signature: null,
       narrative: null,
@@ -669,8 +677,21 @@ export class WikiSearchToolHandler {
           case 'tether_type':
             article.tether_type = value;
             break;
-          case 'tether_target':
-            article.tether_target = value;
+          case 'narrative_archetype':
+            article.narrative_archetype = value;
+            break;
+          case 'emotion_primary':
+            article.emotion_primary = value;
+            break;
+          case 'emotion_subtone':
+            try {
+              article.emotion_subtone = JSON.parse(value);
+            } catch {
+              article.emotion_subtone = [value];
+            }
+            break;
+          case 'motivational_orientation':
+            article.motivational_orientation = value;
             break;
           case 'recall_triggers':
             try {
