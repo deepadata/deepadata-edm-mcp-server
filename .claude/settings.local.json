@@ -7,7 +7,16 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(dir \"C:\\\\Users\\\\JasonHarvey-ModularW\\\\Documents\\\\GitHub\")"
+      "Bash(dir \"C:\\\\Users\\\\JasonHarvey-ModularW\\\\Documents\\\\GitHub\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm publish:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(node -e:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(npm view:*)",
+      "Bash(rm \"C:\\Users\\JasonHarvey-ModularW\\Documents\\GitHub\\deepadata-edm-mcp-server\\nul\")"
     ]
   }
 }
