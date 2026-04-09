@@ -129,6 +129,7 @@ interface SignificanceArticle {
   artifact_id: string | null;
   captured_at: string | null;
   profile: string | null;
+  vp_id: string | null;
 }
 
 interface WikiSearchResult {
@@ -202,7 +203,11 @@ interface EdmArtifactPortable {
   impulse?: {
     motivational_orientation?: string;
   };
+  governance?: {
+    vp_id?: string;
+  };
   milky_way?: Record<string, unknown>;
+  extensions?: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -476,12 +481,14 @@ export class WikiGenerateToolHandler {
     const artifactId = artifact.meta?.artifact_id;
     const capturedAt = artifact.meta?.captured_at;
     const artifactProfile = artifact.meta?.profile;
+    const vpId = artifact.governance?.vp_id;
 
-    if (artifactId || capturedAt || artifactProfile) {
+    if (artifactId || capturedAt || artifactProfile || vpId) {
       lines.push('## Source Artifact');
       if (artifactId) lines.push(`- **artifact_id:** ${artifactId}`);
       if (capturedAt) lines.push(`- **captured_at:** ${capturedAt}`);
       if (artifactProfile) lines.push(`- **profile:** ${artifactProfile}`);
+      if (vpId) lines.push(`- **vp_id:** ${vpId}`);
       lines.push('');
     }
 
@@ -633,6 +640,7 @@ export class WikiSearchToolHandler {
       artifact_id: null,
       captured_at: null,
       profile: null,
+      vp_id: null,
     };
 
     // Parse markdown fields
@@ -711,6 +719,9 @@ export class WikiSearchToolHandler {
             break;
           case 'profile':
             article.profile = value;
+            break;
+          case 'vp_id':
+            article.vp_id = value;
             break;
         }
       }
