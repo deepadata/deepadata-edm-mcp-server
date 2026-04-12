@@ -1,0 +1,45 @@
+# DeepaData
+
+## What this is
+
+DeepaData is the significance layer for AI memory.
+The Emotional Data Model (EDM) is an open standard
+for encoding what mattered in human experience —
+not just what was said — as structured fields at
+capture time.
+
+## The problem we solve
+
+Semantic memory systems forget and false-recall
+as corpora grow (proven: Gopinath et al. 2026,
+"The Price of Meaning"). The only principled
+solution is an exact episodic record with
+structured symbolic fields — which is what
+EDM provides.
+
+## Core endpoints
+
+POST /v1/extract — extract EDM significance fields
+POST /v1/activate — route queries via significance
+POST /v1/feedback — close the learning loop
+
+## Key fields
+
+arc_type, emotional_weight, identity_thread,
+anchor, spark, wound, fuel, bridge, echo,
+tether_type, vp_id
+
+## Open standard
+
+EDM spec: emotionaldatamodel.org
+DOI: 10.5281/zenodo.19211903
+License: MIT
+
+## Commercial layer
+
+deepadata.com — API, certification, VitaPass registry
+
+## Integration
+
+npm install deepadata-mem0-adapter
+npx -y deepadata-edm-mcp-server
