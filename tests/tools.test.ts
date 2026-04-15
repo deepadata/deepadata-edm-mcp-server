@@ -17,7 +17,7 @@ import type { EdmArtifact, AuthContext } from '../src/types.js';
 
 describe('Tools', () => {
   const createArtifact = (id: string): EdmArtifact => ({
-    schema_version: '0.7.0',
+    schema_version: '0.8.0',
     artifact_id: id,
     meta: {
       created_at: new Date().toISOString(),
@@ -54,7 +54,7 @@ describe('Tools', () => {
 
       expect(result.artifact).toBeDefined();
       expect(result.artifact.artifact_id).toBeDefined();
-      expect(result.artifact.schema_version).toBe('0.7.0');
+      expect(result.artifact.schema_version).toBe('0.8.0');
       expect(result.artifact.content.data.source_text).toBe(
         'Hello, this is test content.'
       );
@@ -336,7 +336,7 @@ describe('Tools', () => {
 
     it('should return false for missing required fields', () => {
       expect(isValidEdmArtifact({})).toBe(false);
-      expect(isValidEdmArtifact({ schema_version: '0.7.0' })).toBe(false);
+      expect(isValidEdmArtifact({ schema_version: '0.8.0' })).toBe(false);
     });
   });
 });

@@ -52,7 +52,7 @@ not keyword frequency.
 |---|---|
 | extract_from_content | Extract EDM artifact from text via /v1/extract |
 | seal_artifact | Cryptographically seal artifact via /api/v1/issue |
-| validate_edm | Validate artifact against EDM v0.7.0 schema |
+| validate_edm | Validate artifact against EDM v0.8.0 schema |
 | edm_project | Project artifact fields for agent context |
 
 ### Significance Routing
@@ -160,6 +160,12 @@ only path to the right answer.
 | KIMI_API_KEY | No | Project tool context |
 
 Get your API key at [deepadata.com](https://deepadata.com)
+
+## What's New in v0.3.0
+
+- EDM v0.8.0 support — +gratitude +authenticity arc_types
+- partner: prefix meta.profile per ADR-0017
+- deepadata-edm-sdk ^0.8.4 peer dependency
 
 ## What's New in v0.2.0
 
