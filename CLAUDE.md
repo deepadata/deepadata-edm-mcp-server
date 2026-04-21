@@ -48,6 +48,11 @@ into the assistant context window.
 | Do not implement local signing | CA model — use /api/v1/issue |
 | BYOA security model | Bring Your Own Auth |
 
+## Open Items
+
+- `activate_reason` MCP tool: not yet implemented. Platform endpoint
+  `/v1/activate_reason` exists (ADR-0018); MCP tool wrapper pending.
+
 ## Source of Truth
 
 → **See `deepadata-com/planning/CLAUDE_PROJECT.md`**
