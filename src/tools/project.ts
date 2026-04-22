@@ -2,7 +2,7 @@
  * edm_project Tool
  *
  * Project an EDM artifact into the canonical agent-consumable shape
- * defined in ADR-0006. Preserves governance properties for agent pipelines.
+ * defined in ADR-0009. Preserves governance properties for agent pipelines.
  */
 
 import type { ArtifactStorage, AuthContext } from '../types.js';
@@ -13,7 +13,7 @@ import type { ArtifactStorage, AuthContext } from '../types.js';
 export const projectToolDefinition = {
   name: 'edm_project',
   description:
-    'Project an EDM artifact into the canonical agent-consumable shape (ADR-0006). Returns governance-preserving projection with optional LLM-generated context note.',
+    'Project an EDM artifact into the canonical agent-consumable shape (ADR-0009). Returns governance-preserving projection with optional LLM-generated context note.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -33,7 +33,7 @@ export const projectToolDefinition = {
 };
 
 /**
- * EDM Projection shape (ADR-0006 v1.0)
+ * EDM Projection shape (ADR-0009 v1.0)
  */
 export interface EdmProjection {
   edm_projection: '1.0';

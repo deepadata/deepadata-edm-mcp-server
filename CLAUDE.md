@@ -35,7 +35,7 @@ into the assistant context window.
 - `extract_from_content` — LLM extraction via DeepaData API
 - `seal_artifact` — Certified sealing via DeepaData API
 - `validate_edm` — Schema validation
-- `edm_project` — Agent projection (ADR-0006)
+- `edm_project` — Agent projection (ADR-0009)
 - `deepadata_activate` — NL query to significance field filters
 - `edm_wiki_generate` — Generate significance wiki from source text
 - `edm_wiki_search` — Search wiki by arc_type, emotional_weight, identity_thread
