@@ -2,6 +2,8 @@
 
 MCP adapter for EDM artifacts in AI assistants.
 
+**Last session:** 2026-04-15 — v0.3.0 published to npm (wiki tools, activate tool, v0.8.0 types)
+
 ## What This Repo Is
 
 An MCP (Model Context Protocol) server that exposes EDM
