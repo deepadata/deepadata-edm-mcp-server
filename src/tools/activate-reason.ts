@@ -30,8 +30,9 @@ export const activateReasonToolDefinition = {
       namespace: {
         type: 'string',
         description:
-          'Optional corpus namespace to ' +
-          'query',
+          'Corpus namespace to query ' +
+          '(REQUIRED by the platform ' +
+          'API, e.g. user-<id>)',
       },
       subject_vp_id: {
         type: 'string',
@@ -46,7 +47,7 @@ export const activateReasonToolDefinition = {
           '(default: 5, max: 20)',
       },
     },
-    required: ['query'],
+    required: ['query', 'namespace'],
   },
 };
 
