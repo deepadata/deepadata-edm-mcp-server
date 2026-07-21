@@ -56,7 +56,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "edm-spec": "file:../edm-spec"
   },
   "peerDependencies": {
     "deepadata-edm-sdk": "^0.8.4"
