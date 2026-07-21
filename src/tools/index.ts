@@ -46,6 +46,12 @@ export {
 } from './activate.js';
 
 export {
+  ActivateReasonToolHandler,
+  activateReasonToolDefinition,
+  createActivateReasonTool,
+} from './activate-reason.js';
+
+export {
   createWikiGenerateTool,
   createWikiSearchTool,
   createWikiLintTool,

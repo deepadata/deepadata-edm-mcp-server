@@ -56,6 +56,7 @@ import {
   createValidateTool,
   createProjectTool,
   createActivateTool,
+  createActivateReasonTool,
   createWikiGenerateTool,
   createWikiSearchTool,
   createWikiLintTool,
@@ -64,6 +65,7 @@ import {
   validateToolDefinition,
   projectToolDefinition,
   activateToolDefinition,
+  activateReasonToolDefinition,
   wikiGenerateToolDefinition,
   wikiSearchToolDefinition,
   wikiLintToolDefinition,
@@ -71,11 +73,7 @@ import {
 
 import { createExtractorFromEnv } from './extractors/index.js';
 
-/**
- * Server name and version
- */
-const SERVER_NAME = 'deepadata-edm-mcp-server';
-const SERVER_VERSION = '0.1.0';
+import { SERVER_NAME, SERVER_VERSION } from './version.js';
 
 /**
  * Create and configure the MCP server
@@ -142,6 +140,10 @@ export function createServer(config: ServerConfig = {}) {
     process.env.KIMI_API_KEY
   );
   const activateTool = createActivateTool(
+    process.env.DEEPADATA_API_KEY,
+    process.env.DEEPADATA_API_URL
+  );
+  const activateReasonTool = createActivateReasonTool(
     process.env.DEEPADATA_API_KEY,
     process.env.DEEPADATA_API_URL
   );
@@ -290,6 +292,7 @@ export function createServer(config: ServerConfig = {}) {
         validateToolDefinition,
         projectToolDefinition,
         activateToolDefinition,
+        activateReasonToolDefinition,
         wikiGenerateToolDefinition,
         wikiSearchToolDefinition,
         wikiLintToolDefinition,
@@ -356,6 +359,18 @@ export function createServer(config: ServerConfig = {}) {
 
         case 'deepadata_activate': {
           const result = await activateTool.handler(args);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'deepadata_activate_reason': {
+          const result = await activateReasonTool.handler(args);
           return {
             content: [
               {
@@ -456,6 +471,7 @@ async function main() {
 main();
 
 // Export for programmatic use
+export * from './version.js';
 export * from './types.js';
 export * from './api/index.js';
 export * from './security/index.js';
