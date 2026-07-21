@@ -3,7 +3,7 @@
  */
 
 /**
- * EDM Artifact structure (v0.4.0)
+ * EDM Artifact structure (schema version derives from edm-spec — see src/version.ts)
  */
 export interface EdmArtifact {
   schema_version: string;

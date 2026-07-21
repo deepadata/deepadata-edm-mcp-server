@@ -6,6 +6,7 @@
 
 import type { EdmArtifact, ValidationResult, ValidationError, ValidationWarning } from '../types.js';
 import { validateGovernance } from '../security/governance.js';
+import { EDM_VERSION_LABEL } from '../version.js';
 
 /**
  * Tool definition for MCP
@@ -13,7 +14,7 @@ import { validateGovernance } from '../security/governance.js';
 export const validateToolDefinition = {
   name: 'validate_edm',
   description:
-    'Validate an EDM artifact against the v0.4.0 schema and governance rules. Returns validation errors and warnings.',
+    `Validate an EDM artifact against the ${EDM_VERSION_LABEL} schema and governance rules. Returns validation errors and warnings.`,
   inputSchema: {
     type: 'object' as const,
     properties: {

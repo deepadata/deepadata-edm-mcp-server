@@ -7,6 +7,7 @@
 import type { ArtifactStorage, AuthContext, EdmArtifact } from '../types.js';
 import { canAccess } from '../security/governance.js';
 import { StorageErrorCode } from '../storage/base.js';
+import { EDM_VERSION_LABEL } from '../version.js';
 
 /**
  * EDM resource URI prefix
@@ -187,7 +188,7 @@ export function getEdmResourceTemplates() {
     {
       uriTemplate: 'edm://artifact/{id}',
       name: 'EDM Artifact',
-      description: 'Read an EDM v0.4.0 artifact by ID',
+      description: `Read an EDM ${EDM_VERSION_LABEL} artifact by ID`,
       mimeType: EDM_MIME_TYPE,
     },
   ];

@@ -6,6 +6,9 @@
 
 export { createServer, runServer } from './server.js';
 
+// Re-export version truth (SERVER_VERSION = this server; EDM_VERSION = spec)
+export * from './version.js';
+
 // Re-export types
 export * from './types.js';
 

@@ -11,6 +11,7 @@ import type {
   AuthContext,
 } from '../types.js';
 import { applyDefaultGovernance } from '../security/governance.js';
+import { EDM_VERSION, EDM_VERSION_LABEL } from '../version.js';
 
 /**
  * Tool definition for MCP
@@ -18,7 +19,7 @@ import { applyDefaultGovernance } from '../security/governance.js';
 export const extractToolDefinition = {
   name: 'extract_from_content',
   description:
-    'Extract EDM artifact from text content and optional image. Returns structured data following the EDM v0.8.0 schema.',
+    `Extract EDM artifact from text content and optional image. Returns structured data following the EDM ${EDM_VERSION_LABEL} schema.`,
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -103,7 +104,7 @@ const defaultExtractor: ExtractFunction = async (
 
   // Create a basic artifact structure from the input
   const artifact: EdmArtifact = {
-    schema_version: '0.8.0',
+    schema_version: EDM_VERSION,
     artifact_id: id,
     meta: {
       created_at: now,
