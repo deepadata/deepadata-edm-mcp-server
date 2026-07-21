@@ -45,20 +45,21 @@ These fields power significance-weighted
 retrieval — finding memories by what mattered,
 not keyword frequency.
 
-## The Eight Tools
+## The Nine Tools
 
 ### Extraction & Governance
 | Tool | Description |
 |---|---|
 | extract_from_content | Extract EDM artifact from text via /v1/extract |
 | seal_artifact | Cryptographically seal artifact via /api/v1/issue |
-| validate_edm | Validate artifact against EDM v0.8.0 schema |
+| validate_edm | Validate artifact against the EDM schema (version derives from the installed `edm-spec` package) |
 | edm_project | Project artifact fields for agent context |
 
 ### Significance Routing
 | Tool | Description |
 |---|---|
 | deepadata_activate | Translate NL query to EDM field filters via /v1/activate |
+| deepadata_activate_reason | Significance reasoning via /v1/activate_reason — answer + sources + fields_used (ADR-0018) |
 
 ### Significance Wiki (new in v0.2.0)
 | Tool | Description |
