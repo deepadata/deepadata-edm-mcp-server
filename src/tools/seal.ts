@@ -6,12 +6,10 @@
  */
 
 import type {
-  EdmArtifact,
   DdnaEnvelope,
   EnvelopeStorage,
   AuthContext,
 } from '../types.js';
-import { canExport, validateGovernance } from '../security/governance.js';
 import { DeepaDataClient, type IssueResponse } from '../api/deepadata-client.js';
 
 /**
@@ -26,7 +24,8 @@ export const sealToolDefinition = {
     properties: {
       artifact: {
         type: 'object',
-        description: 'The EDM artifact to seal',
+        description:
+          'The EDM artifact to seal (spec shape: meta + core domains, meta.version set). Passed to the platform verbatim.',
       },
       pathway: {
         type: 'string',
@@ -52,7 +51,8 @@ export const sealToolDefinition = {
  * Seal result
  */
 export interface SealResult {
-  envelope: DdnaEnvelope;
+  /** The .ddna envelope exactly as issued by the platform (lib/ddna shape). */
+  envelope: object;
   certificate_id?: string;
   certification_level?: string;
   savedId?: string;
@@ -107,7 +107,7 @@ export class SealToolHandler {
    * Execute sealing via DeepaData API
    */
   async execute(args: {
-    artifact: EdmArtifact;
+    artifact: object;
     pathway?: 'subject' | 'delegated' | 'retrospective';
     authority?: string;
     save?: boolean;
@@ -122,36 +122,57 @@ export class SealToolHandler {
       );
     }
 
-    // Validate artifact
-    if (!args.artifact) {
+    // Validate artifact shape against what the sealing authority accepts:
+    // the platform's seal() requires the EDM spec shape — meta + core
+    // domains with meta.version set. The artifact is forwarded verbatim,
+    // so anything beyond that (jurisdiction, retention, consent,
+    // certification level) is the platform's call at issue time.
+    if (!args.artifact || typeof args.artifact !== 'object') {
       throw new SealError(
         'Artifact is required',
         SealErrorCode.INVALID_INPUT
       );
     }
 
-    if (!args.artifact.artifact_id) {
+    const artifact = args.artifact as Record<string, unknown>;
+    const meta = artifact.meta as Record<string, unknown> | undefined;
+
+    if (!meta || typeof meta !== 'object') {
       throw new SealError(
-        'Artifact must have an artifact_id',
+        "Artifact must have a 'meta' domain (EDM spec shape). Legacy artifacts without meta/core domains cannot be sealed by the platform.",
         SealErrorCode.INVALID_INPUT
       );
     }
 
-    // Validate governance
-    const govValidation = validateGovernance(args.artifact);
-    if (!govValidation.valid) {
+    if (!meta.version || typeof meta.version !== 'string') {
       throw new SealError(
-        `Governance validation failed: ${govValidation.errors.join(', ')}`,
+        "Artifact must have 'meta.version' — the platform refuses to seal a payload without its EDM version.",
+        SealErrorCode.INVALID_INPUT
+      );
+    }
+
+    if (!artifact.core || typeof artifact.core !== 'object') {
+      throw new SealError(
+        "Artifact must have a 'core' domain (EDM spec shape).",
+        SealErrorCode.INVALID_INPUT
+      );
+    }
+
+    // Export prohibition is the one governance rule enforced locally.
+    // Spec vocabulary is 'forbidden' (edm-spec governance fragment);
+    // 'prohibited' is the legacy spelling.
+    const governance = artifact.governance as Record<string, unknown> | undefined;
+    const exportability = governance?.exportability;
+    if (exportability === 'forbidden' || exportability === 'prohibited') {
+      throw new SealError(
+        'Artifact governance.exportability forbids export; it cannot be sealed.',
         SealErrorCode.GOVERNANCE_VIOLATION
       );
     }
-    warnings.push(...govValidation.warnings);
 
-    // Check exportability
-    if (!canExport(args.artifact)) {
-      throw new SealError(
-        'Artifact is not exportable and cannot be sealed',
-        SealErrorCode.GOVERNANCE_VIOLATION
+    if (!governance) {
+      warnings.push(
+        "Artifact has no 'governance' domain; the platform will refuse Certified-level issuance."
       );
     }
 
@@ -178,13 +199,13 @@ export class SealToolHandler {
       );
     }
 
-    const envelope = response.data.envelope as DdnaEnvelope;
+    const envelope = response.data.envelope;
 
     // Optionally save to local storage
     let savedId: string | undefined;
     if (args.save && this.storage) {
       try {
-        savedId = await this.storage.save(envelope);
+        savedId = await this.storage.save(envelope as DdnaEnvelope);
       } catch (error) {
         throw new SealError(
           'Failed to save envelope to local storage',

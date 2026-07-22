@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "id": "fafd5503-be3d-4dbf-a82c-a363f0e51029",
+    "version": "0.8.0",
+    "profile": "full",
+    "created_at": "2026-07-21T15:45:21.004Z",
+    "updated_at": null,
+    "locale": "en-us",
+    "owner_user_id": null,
+    "parent_id": null,
+    "visibility": "private",
+    "pii_tier": "low",
+    "source_type": "text",
+    "source_context": null,
+    "consent_basis": "consent",
+    "consent_scope": null,
+    "consent_revoked_at": null,
+    "tags": []
+  },
+  "core": {
+    "anchor": "brother's voice on the line",
+    "spark": "dialing after two years",
+    "wound": "two years of silence with brother",
+    "fuel": "his admission of waiting",
+    "bridge": "the phone call",
+    "echo": "chest unclenching",
+    "narrative": "My hands shook as I dialed his number after two years of silence, each digit heavy with the weight of everything unsaid since our mother's funeral. When he answered on the second ring and admitted he had been waiting, I felt something in my chest that had been clenched tight since 2024 finally begin to loosen. We spoke of her garden, of the ways we had each carried our grief alone, and in that conversation I found the exact weight of a relief I never thought I would feel again."
+  },
+  "constellation": {
+    "emotion_primary": "relief",
+    "emotion_subtone": [
+      "trembling",
+      "cathartic",
+      "tentative",
+      "grateful"
+    ],
+    "higher_order_emotion": "reconciliation",
+    "meta_emotional_state": "release",
+    "interpersonal_affect": "warmth",
+    "narrative_arc": "connection",
+    "relational_dynamics": "sibling_bond",
+    "temporal_context": "recent",
+    "memory_type": "milestone",
+    "media_format": null,
+    "narrative_archetype": "seeker",
+    "symbolic_anchor": "mother's garden",
+    "relational_perspective": "family",
+    "temporal_rhythm": "sudden",
+    "identity_thread": "i am someone who can bridge silence",
+    "expressed_insight": "i want to remember the exact weight of this relief",
+    "transformational_pivot": false,
+    "somatic_signature": "hands shaking, chest unclenching",
+    "arc_type": "reconciliation"
+  },
+  "governance": {
+    "jurisdiction": "None",
+    "retention_policy": {
+      "basis": "user_defined",
+      "ttl_days": null,
+      "on_expiry": "soft_delete"
+    },
+    "subject_rights": {
+      "portable": true,
+      "erasable": true,
+      "explainable": false
+    },
+    "exportability": "allowed",
+    "k_anonymity": {
+      "k": null,
+      "groups": []
+    },
+    "policy_labels": [],
+    "masking_rules": []
+  },
+  "telemetry": {
+    "entry_confidence": 1,
+    "extraction_model": "kimi-k2.5",
+    "extraction_provider": "kimi",
+    "extraction_notes": "experiential_stance=lived"
+  },
+  "milky_way": {
+    "event_type": "reunion call",
+    "location_context": null,
+    "associated_people": [
+      "brother"
+    ],
+    "visibility_context": "private",
+    "tone_shift": "anxiety to relief"
+  },
+  "gravity": {
+    "emotional_weight": 0.85,
+    "emotional_density": "high",
+    "valence": "positive",
+    "viscosity": "high",
+    "gravity_type": "relational repair",
+    "tether_type": "person",
+    "recall_triggers": [
+      "phone ringing",
+      "garden soil",
+      "shaking hands",
+      "second ring"
+    ],
+    "retrieval_keys": [
+      "brother",
+      "silence broken",
+      "mothers garden",
+      "chest unclenching",
+      "two years"
+    ],
+    "nearby_themes": [
+      "estrangement",
+      "grief",
+      "reconciliation",
+      "family silence",
+      "funeral"
+    ],
+    "recurrence_pattern": "isolated",
+    "strength_score": 0.9,
+    "temporal_decay": "slow",
+    "resilience_markers": [
+      "courage",
+      "vulnerability",
+      "hope"
+    ],
+    "adaptation_trajectory": "improving"
+  },
+  "impulse": {
+    "primary_energy": "courage",
+    "drive_state": "repair",
+    "motivational_orientation": "belonging",
+    "temporal_focus": "present",
+    "directionality": "outward",
+    "social_visibility": "relational",
+    "urgency": "elevated",
+    "risk_posture": "bold",
+    "agency_level": "high",
+    "regulation_state": "wavering",
+    "attachment_style": "anxious",
+    "coping_style": "confront"
+  },
+  "system": {
+    "embeddings": [],
+    "indices": {
+      "waypoint_ids": []
+    }
+  },
+  "crosswalks": {
+    "plutchik_primary": null,
+    "geneva_emotion_wheel": null,
+    "DSM5_specifiers": null,
+    "ISO_27557_labels": null
+  }
+}

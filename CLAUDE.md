@@ -2,7 +2,7 @@
 
 MCP adapter for EDM artifacts in AI assistants.
 
-**Last session:** 2026-07-22 — version truth (one version universe, TODO 3.e): `edm-spec` dependency added, `src/version.ts` (SERVER_VERSION + EDM_VERSION), `deepadata_activate_reason` tool added. Local only, NOT published.
+**Last session:** 2026-07-22 (second session) — seal_artifact fixed for platform-spec artifacts (smoke S7.2): pre-flight now mirrors the sealing authority (meta + core + meta.version, spec `forbidden` vocabulary) instead of the legacy `artifact_id`/`exportability` shape; artifact and envelope pass through verbatim. Regression suite `tests/seal-platform-artifact.test.ts` + fixture (the exact S7 artifact); 121/121 tests. Local only, NOT published.
 
 ## What This Repo Is
 
@@ -71,6 +71,20 @@ strings belong anywhere else in runtime code.
 - `activate_reason` MCP tool: DONE 2026-07-22 —
   `deepadata_activate_reason` wraps `/api/v1/activate_reason`
   (ADR-0018).
+
+## Known Latent (not blocking, spec-shape follow-ups)
+
+- Envelope local storage (`seal_artifact` with `save: true`) still
+  validates the legacy envelope shape (`artifact`/`signature`); real
+  lib/ddna envelopes (`payload`/`proof`) would fail to save. S7 and
+  normal use don't save. Same legacy-shape family as the fixed seal
+  pre-flight.
+- `extract_from_content` runs `applyDefaultGovernance` over the
+  platform artifact, bolting legacy fields (`exportability`,
+  `meta.visibility`) onto a spec-shaped artifact
+  (`additionalProperties: false` domains). Harmless for sealing (seal
+  takes caller input verbatim) but the mutated artifact is not
+  schema-clean.
 
 ## Pending
 
